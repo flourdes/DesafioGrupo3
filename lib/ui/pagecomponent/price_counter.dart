@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class PriceCounter extends StatefulWidget {
   String? description;
   int valueMax;
-  int? valueMin;
+  late int valueMin;
   int priceUnit;
   late Color color;
   PriceCounter({
@@ -21,20 +21,40 @@ class PriceCounter extends StatefulWidget {
 class _PriceCounterState extends State<PriceCounter> {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _description(),
-        _counter(),
-        _totalPrice(),
-      ],
+
+    return Padding(
+      padding: const EdgeInsets.all(5),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _description(),
+          _counter(),
+          _totalPrice(),
+        ],
+      ),
     );
   }
 
   _description(){
     return Text('${widget.description}',style: TextStyle(color: widget.color, fontSize: 20));
   }
+
+  late int numberBingos = widget.valueMin;
+  late int total = widget.priceUnit;
+  void _incrementCounter() {
+    setState(() {
+      total += widget.priceUnit;
+      numberBingos++;
+    });
+  }
+  void _decrementCounter() {
+    setState(() {
+      total -= widget.priceUnit;
+      numberBingos--;
+    });
+  }
+
   _counter(){
     return Container(
         height: 50,
@@ -48,9 +68,9 @@ class _PriceCounterState extends State<PriceCounter> {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        IconButton(onPressed: null, icon: Icon(Icons.remove,color: widget.color,)),
-        Text('${widget.valueMin}',style: TextStyle(color: widget.color, fontSize: 25, fontWeight: FontWeight.bold),),
-        IconButton(onPressed: null, icon: Icon(Icons.add, color: widget.color,)),
+        IconButton(onPressed: _decrementCounter, icon: Icon(Icons.remove,color: widget.color,)),
+        Text('$numberBingos',style: TextStyle(color: widget.color, fontSize: 20, fontWeight: FontWeight.bold),),
+        IconButton(onPressed: _incrementCounter, icon: Icon(Icons.add, color: widget.color,)),
       ],
     ),
     );
@@ -65,7 +85,12 @@ class _PriceCounterState extends State<PriceCounter> {
     color: widget.color,
     width: 2)
     ),
-      child: Center(child: Text('${widget.priceUnit}',style: TextStyle(color: widget.color, fontSize: 25, fontWeight: FontWeight.bold),)),
+      child: Row(
+        children: [
+          Icon(Icons.add, color: widget.color,),
+          Center(child: Text('$total',style: TextStyle(color: widget.color, fontSize: 20, fontWeight: FontWeight.bold),)),
+        ],
+      ),
     );
   }
 }
